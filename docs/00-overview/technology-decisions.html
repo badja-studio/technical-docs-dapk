@@ -1,0 +1,1798 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DAPK Technology Stack - Overview</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.6;
+            color: #1a202c;
+            background: #ffffff;
+        }
+        
+        /* Print Styles */
+        @media print {
+            body {
+                font-size: 11pt;
+                line-height: 1.5;
+            }
+            
+            .page-break {
+                page-break-after: always;
+            }
+            
+            .no-print {
+                display: none;
+            }
+            
+            a {
+                text-decoration: none;
+                color: #2563eb;
+            }
+            
+            .hero {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            }
+        }
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 80px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" fill="none"/><circle cx="50" cy="50" r="2" fill="rgba(255,255,255,0.1)"/></svg>');
+            opacity: 0.3;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .hero h1 {
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .hero p {
+            font-size: 20px;
+            opacity: 0.95;
+            font-weight: 300;
+        }
+        
+        .company-logo {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 30px;
+            letter-spacing: 2px;
+        }
+        
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+        
+        /* Section */
+        .section {
+            margin-bottom: 60px;
+        }
+        
+        .section-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid #667eea;
+        }
+        
+        .section-subtitle {
+            font-size: 24px;
+            font-weight: 600;
+            color: #2d3748;
+            margin: 32px 0 16px 0;
+        }
+        
+        /* Tech Card */
+        .tech-card {
+            background: #ffffff;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 32px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .tech-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+        }
+        
+        .tech-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #f7fafc;
+        }
+        
+        .tech-logo {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            margin-right: 24px;
+            border-radius: 8px;
+            padding: 8px;
+            background: #f7fafc;
+        }
+        
+        .tech-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #2d3748;
+        }
+        
+        .tech-subtitle {
+            font-size: 16px;
+            color: #718096;
+            margin-top: 4px;
+        }
+        
+        /* Benefits */
+        .benefit-item {
+            display: flex;
+            align-items: start;
+            margin-bottom: 16px;
+            padding: 16px;
+            background: #f7fafc;
+            border-radius: 8px;
+        }
+        
+        .benefit-icon {
+            font-size: 24px;
+            margin-right: 16px;
+            flex-shrink: 0;
+        }
+        
+        .benefit-content h4 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 6px;
+        }
+        
+        .benefit-content p {
+            font-size: 15px;
+            color: #4a5568;
+            line-height: 1.5;
+        }
+        
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 24px;
+            margin: 32px 0;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 24px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        /* Comparison Table */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 24px 0;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .comparison-table thead {
+            background: #667eea;
+            color: white;
+        }
+        
+        .comparison-table th {
+            padding: 16px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        .comparison-table td {
+            padding: 16px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .comparison-table tbody tr:hover {
+            background: #f7fafc;
+        }
+        
+        .check {
+            color: #48bb78;
+            font-weight: 600;
+        }
+        
+        .cross {
+            color: #f56565;
+            font-weight: 600;
+        }
+        
+        /* Architecture Diagram */
+        .architecture {
+            background: #f7fafc;
+            padding: 32px;
+            border-radius: 12px;
+            margin: 24px 0;
+            text-align: center;
+        }
+        
+        .architecture img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+        
+        /* List Styles */
+        ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        li {
+            padding: 8px 0 8px 32px;
+            position: relative;
+        }
+        
+        li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #48bb78;
+            font-weight: 700;
+            font-size: 18px;
+        }
+        
+        li.cross::before {
+            content: "✗";
+            color: #f56565;
+        }
+        
+        /* Quote */
+        .quote {
+            background: #edf2f7;
+            border-left: 4px solid #667eea;
+            padding: 20px 24px;
+            margin: 24px 0;
+            font-style: italic;
+            color: #2d3748;
+        }
+        
+        /* Footer */
+        .footer {
+            background: #2d3748;
+            color: white;
+            text-align: center;
+            padding: 32px;
+            margin-top: 60px;
+        }
+        
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        /* Print Button */
+        .print-button {
+            position: fixed;
+            bottom: 32px;
+            right: 32px;
+            background: #667eea;
+            color: white;
+            padding: 16px 32px;
+            border-radius: 50px;
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+        
+        .print-button:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(102, 126, 234, 0.5);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 32px;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+            
+            .tech-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .tech-logo {
+                margin: 0 auto 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Print Button -->
+    <button class="print-button no-print" onclick="window.print()">
+        🖨️ Print to PDF
+    </button>
+
+    <!-- Hero Section -->
+    <div class="hero">
+        <div class="hero-content">
+            <div class="company-logo">PT. DUTA ANGKASA PRIMA KARGO</div>
+            <h1>Technology Stack Overview</h1>
+            <p>Penjelasan Lengkap Teknologi yang Digunakan untuk Sistem DAPK</p>
+            <p style="margin-top: 20px; font-size: 16px; opacity: 0.8;">
+                Version 1.0.0 | January 2026
+            </p>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Executive Summary -->
+        <div class="section">
+            <h2 class="section-title">🎯 Ringkasan Eksekutif</h2>
+            <p style="font-size: 18px; color: #4a5568; margin-bottom: 24px;">
+                Sistem DAPK dibangun dengan teknologi modern yang terbukti reliable, scalable, dan cost-effective. 
+                Semua teknologi yang dipilih adalah open-source (gratis) dan digunakan oleh perusahaan-perusahaan 
+                besar seperti Microsoft, Uber, Netflix, Nike, dan Instagram.
+            </p>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">$0</div>
+                    <div class="stat-label">License Fees</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">99.9%</div>
+                    <div class="stat-label">Uptime Target</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">10,000+</div>
+                    <div class="stat-label">Requests/Second</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">&lt; 2s</div>
+                    <div class="stat-label">Page Load Time</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="page-break"></div>
+
+        <!-- Architecture Overview -->
+        <div class="section">
+            <h2 class="section-title">🏗️ Arsitektur Sistem</h2>
+            <div class="architecture">
+                <img src="https://via.placeholder.com/1000x600/667eea/ffffff?text=DAPK+System+Architecture" 
+                     alt="Architecture Diagram" 
+                     style="max-width: 100%; border: 2px solid #e2e8f0;">
+                <p style="margin-top: 16px; color: #718096; font-size: 14px;">
+                    Diagram: Arsitektur 3-tier dengan load balancing dan horizontal scaling
+                </p>
+            </div>
+        </div>
+
+        <!-- Technology 1: FastAPI -->
+        <div class="tech-card">
+            <div class="tech-header">
+                <img src="https://fastapi.tiangolo.com/img/logo-margin/logo-teal.png" 
+                     alt="FastAPI Logo" 
+                     class="tech-logo">
+                <div>
+                    <h3 class="tech-title">FastAPI (Python) 🐍</h3>
+                    <p class="tech-subtitle">Backend API Framework - Business Logic Layer</p>
+                </div>
+            </div>
+            
+            <h4 style="font-size: 20px; font-weight: 600; margin-bottom: 16px;">Apa itu FastAPI?</h4>
+            <p style="margin-bottom: 24px; color: #4a5568;">
+                FastAPI adalah framework modern untuk membuat API (Application Programming Interface) - 
+                penghubung antara tampilan website dan database. Ini adalah "otak" dari sistem yang 
+                memproses semua business logic.
+            </p>
+            
+            <h4 style="font-size: 20px; font-weight: 600; margin-bottom: 16px;">Mengapa FastAPI?</h4>
+            
+            <div class="benefit-item">
+                <div class="benefit-icon">⚡</div>
+                <div class="benefit-content">
+                    <h4>Sangat Cepat</h4>
+                    <p>Salah satu framework Python tercepat. Bisa menangani 10,000+ request per detik. 
+                       Cocok untuk sistem logistik dengan transaksi tinggi.</p>
+                </div>
+            </div>
+            
+            <div class="benefit-item">
+                <div class="benefit-icon">📖</div>
+                <div class="benefit-content">
+                    <h4>Dokumentasi API Otomatis</h4>
+                    <p>Swagger UI otomatis tersedia di /docs. Developer tidak perlu menulis dokumentasi manual. 
+                       Mudah untuk testing dan development.</p>
+                </div>
+            </div>
+            
+            <div class="benefit-item">
+                <div class="benefit-icon">🏢</div>
+                <div class="benefit-content">
+                    <h4>Digunakan Perusahaan Besar</h4>
+                    <p>Microsoft, Uber, Netflix menggunakan FastAPI untuk production systems mereka. 
+                       Terbukti production-ready dan reliable.</p>
+                </div>
+            </div>
+            
+            <div class="quote">
+                "FastAPI memungkinkan kami membuat shipment baru dengan kalkulasi tarif otomatis dalam 
+                waktu kurang dari 300ms - sangat responsif untuk user experience yang baik."
+            </div>
+        </div>
+
+        <div class="page-break"></div>
+
+        <!-- Technology 2: Next.js -->
+        <div class="tech-card">
+            <div class="tech-header">
+                <img src="https://assets.vercel.com/image/upload/v1662130559/nextjs/Icon_dark_background.png" 
+                     alt="Next.js Logo" 
+                     class="tech-logo">
+                <div>
+                    <h3 class="tech-title">Next.js (React) ⚛️</h3>
+                    <p class="tech-subtitle">Frontend Framework - User Interface Layer</p>
+                </div>
+            </div>
+            
+            <h4 style="font-size: 20px; font-weight: 600; margin-bottom: 16px;">Apa itu Next.js?</h4>
+            <p style="margin-bottom: 24px; color: #4a5568;">
+                Next.js adalah framework untuk membuat website modern dengan React. Digunakan untuk semua 
+                tampilan (UI) yang dilihat dan digunakan oleh user - staff warehouse, kurir, dan customer.
+            </p>
+            
+            <h4 style="font-size: 20px; font-weight: 600; margin-bottom: 16px;">Mengapa Next.js?</h4>
+            
+            <div class="benefit-item">
+                <div class="benefit-icon">🔍</div>
+                <div class="benefit-content">
+                    <h4>SEO Friendly (Bagus untuk Google)</h4>
+                    <p>Server-Side Rendering membuat website mudah diindex Google. Corporate website DAPK 
+                       akan muncul di pencarian Google dengan ranking yang baik.</p>
+                </div>
+            </div>
+            
+            <div class="benefit-item">
+                <div class="benefit-icon">🚀</div>
+                <div class="benefit-content">
+                    <h4>Performance Tinggi</h4>
+                    <p>Automatic code splitting dan image optimization. Halaman load dalam waktu < 2 detik. 
+                       User experience sangat baik.</p>
+                </div>
+            </div>
+            
+            <div class="benefit-item">
+                <div class="benefit-icon">👟</div>
+                <div class="benefit-content">
+                    <h4>Digunakan Brand Besar</h4>
+                    <p>Nike, TikTok, Twitch, dan ribuan website lainnya menggunakan Next.js. 
+                       Proven untuk production scale yang besar.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Technology 3: PostgreSQL -->
+        <div class="tech-card">
+            <div class="tech-header">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/2/29/Postgresql_elephant.svg" 
+                     alt="PostgreSQL Logo" 
+                     class="tech-logo">
+                <div>
+                    <h3 class="tech-title">PostgreSQL 🐘</h3>
+                    <p class="tech-subtitle">Relational Database - Data Storage Layer</p>
+                </div>
+            </div>
+            
+            <h4 style="font-size: 20px; font-weight: 600; margin-bottom: 16px;">Apa itu PostgreSQL?</h4>
+            <p style="margin-bottom: 24px; color: #4a5568;">
+                PostgreSQL adalah database relational open-source untuk menyimpan SEMUA data DAPK - 
+                shipments, users, tracking, manifests, cash register, dan semua transaksi lainnya.
+            </p>
+            
+            <h4 style="font-size: 20px; font-weight: 600; margin-bottom: 16px;">Mengapa PostgreSQL?</h4>
+            
+            <div class="benefit-item">
+                <div class="benefit-icon">🛡️</div>
+                <div class="benefit-content">
+                    <h4>Sangat Reliable</h4>
+                    <p>30+ tahun track record. ACID compliant (data integrity guaranteed). 
+                       Zero data loss dengan konfigurasi yang benar. Data bisnis Anda AMAN.</p>
+                </div>
+            </div>
+            
+            <div class="benefit-item">
+                <div class="benefit-icon">📊</div>
+                <div class="benefit-content">
+                    <h4>Bisa Handle Jutaan Records</h4>
+                    <p>Advanced query optimizer dan parallel execution. Instagram menggunakan PostgreSQL 
+                       untuk miliaran photos. DAPK bisa scale tanpa masalah.</p>
+                </div>
+            </div>
+            
+            <div class="benefit-item">
+                <div class="benefit-icon">💰</div>
+                <div class="benefit-content">
+                    <h4>Zero License Cost</h4>
+                    <p>Microsoft SQL Server: $3,000-$14,000/tahun. PostgreSQL: $0. 
+                       Savings bisa dialokasikan untuk fitur baru dan operational lainnya.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="page-break"></div>
+
+        <!-- Technology 4: Nginx -->
+        <div class="tech-card">
+            <div class="tech-header">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/c/c5/Nginx_logo.svg" 
+                     alt="Nginx Logo" 
+                     class="tech-logo">
+                <div>
+                    <h3 class="tech-title">Nginx 🔀</h3>
+                    <p class="tech-subtitle">Load Balancer & Web Server</p>
+                </div>
+            </div>
+            
+            <h4 style="font-size: 20px; font-weight: 600; margin-bottom: 16px;">Apa itu Nginx?</h4>
+            <p style="margin-bottom: 24px; color: #4a5568;">
+                Nginx adalah "pintu gerbang" sistem DAPK. Semua request dari user masuk lewat Nginx, 
+                kemudian didistribusikan ke 3 backend servers untuk load balancing.
+            </p>
+            
+            <div class="benefit-item">
+                <div class="benefit-icon">⚖️</div>
+                <div class="benefit-content">
+                    <h4>Load Balancing</h4>
+                    <p>Traffic dibagi ke 3 backend instances. Jika 1 server sibuk, request diroute ke 
+                       server lain. Automatic failover jika ada server down.</p>
+                </div>
+            </div>
+            
+            <div class="benefit-item">
+                <div class="benefit-icon">🔒</div>
+                <div class="benefit-content">
+                    <h4>SSL/TLS Termination</h4>
+                    <p>Handle HTTPS encryption/decryption. Semua komunikasi terenkripsi untuk keamanan. 
+                       Backend servers fokus ke business logic saja.</p>
+                </div>
+            </div>
+            
+            <div class="quote">
+                "Nginx powers lebih dari 30% websites di internet. Industry standard untuk 
+                high-performance web serving dan load balancing."
+            </div>
+        </div>
+
+        <!-- Technology 5: Docker -->
+        <div class="tech-card">
+            <div class="tech-header">
+                <img src="https://www.docker.com/wp-content/uploads/2022/03/Moby-logo.png" 
+                     alt="Docker Logo" 
+                     class="tech-logo">
+                <div>
+                    <h3 class="tech-title">Docker 🐳</h3>
+                    <p class="tech-subtitle">Containerization Platform</p>
+                </div>
+            </div>
+            
+            <h4 style="font-size: 20px; font-weight: 600; margin-bottom: 16px;">Apa itu Docker?</h4>
+            <p style="margin-bottom: 24px; color: #4a5568;">
+                Docker "membungkus" aplikasi dalam containers - unit yang portable dan isolated. 
+                Semua service DAPK (database, backend, frontend) berjalan dalam containers.
+            </p>
+            
+            <div class="benefit-item">
+                <div class="benefit-icon">✅</div>
+                <div class="benefit-content">
+                    <h4>Consistency Across Environments</h4>
+                    <p>Development, staging, dan production environment IDENTIK. "Works on my machine" 
+                       problem ELIMINATED. Deploy dengan confidence.</p>
+                </div>
+            </div>
+            
+            <div class="benefit-item">
+                <div class="benefit-icon">📈</div>
+                <div class="benefit-content">
+                    <h4>Easy Scaling</h4>
+                    <p>Butuh lebih banyak capacity? Tinggal tambah containers. Horizontal scaling 
+                       simple dan straightforward. Bisa scale dari 3 ke 10 backend instances dalam hitungan menit.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Technology 6: Redis -->
+        <div class="tech-card">
+            <div class="tech-header">
+                <img src="https://cdn.worldvectorlogo.com/logos/redis.svg" 
+                     alt="Redis Logo" 
+                     class="tech-logo">
+                <div>
+                    <h3 class="tech-title">Redis ⚡</h3>
+                    <p class="tech-subtitle">In-Memory Cache (Optional)</p>
+                </div>
+            </div>
+            
+            <h4 style="font-size: 20px; font-weight: 600; margin-bottom: 16px;">Apa itu Redis?</h4>
+            <p style="margin-bottom: 24px; color: #4a5568;">
+                Redis adalah in-memory database untuk caching data yang sering diakses. 
+                Membuat sistem 50x lebih cepat untuk data yang di-cache.
+            </p>
+            
+            <div class="benefit-item">
+                <div class="benefit-icon">⚡</div>
+                <div class="benefit-content">
+                    <h4>Super Fast</h4>
+                    <p><strong>Tanpa cache:</strong> Query tariff ke database = 50ms<br>
+                       <strong>Dengan Redis:</strong> Get tariff dari cache = 1ms<br>
+                       <strong>50x lebih cepat!</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="page-break"></div>
+
+        <!-- Comparison Table -->
+        <div class="section">
+            <h2 class="section-title">📊 Perbandingan dengan Alternatif</h2>
+            
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Kriteria</th>
+                        <th>Tech Lama (PHP/MySQL)</th>
+                        <th>Over-Engineering (Kubernetes)</th>
+                        <th style="background: #48bb78;">DAPK Stack ✓</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Performance</strong></td>
+                        <td class="cross">Lambat</td>
+                        <td class="check">Sangat Cepat</td>
+                        <td class="check">Sangat Cepat</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Scalability</strong></td>
+                        <td class="cross">Sulit Scale</td>
+                        <td class="check">Mudah Scale</td>
+                        <td class="check">Mudah Scale</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Complexity</strong></td>
+                        <td class="check">Simple</td>
+                        <td class="cross">Sangat Kompleks</td>
+                        <td class="check">Balanced</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Cost</strong></td>
+                        <td class="check">Murah</td>
+                        <td class="cross">Mahal</td>
+                        <td class="check">Cost Effective</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Maintenance</strong></td>
+                        <td class="cross">Sulit</td>
+                        <td class="cross">Butuh Tim Besar</td>
+                        <td class="check">Mudah</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Talent Availability</strong></td>
+                        <td class="check">Banyak</td>
+                        <td class="cross">Sedikit</td>
+                        <td class="check">Banyak</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Future-Proof</strong></td>
+                        <td class="cross">Outdated</td>
+                        <td class="check">Modern</td>
+                        <td class="check">Modern</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Benefits for Users -->
+        <div class="section">
+            <h2 class="section-title">🎨 Manfaat untuk Pengguna</h2>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;">
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 24px; border-radius: 12px;">
+                    <div style="font-size: 32px; margin-bottom: 12px;">⚡</div>
+                    <h4 style="font-size: 20px; margin-bottom: 8px;">Kecepatan</h4>
+                    <p style="opacity: 0.9;">Halaman load < 2 detik. API response < 200ms. 
+                       Staff bisa kerja lebih cepat dan produktif.</p>
+                </div>
+                
+                <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 24px; border-radius: 12px;">
+                    <div style="font-size: 32px; margin-bottom: 12px;">🛡️</div>
+                    <h4 style="font-size: 20px; margin-bottom: 8px;">Reliability</h4>
+                    <p style="opacity: 0.9;">99.9% uptime. Zero data loss. Backup harian. 
+                       Sistem jarang down, data aman.</p>
+                </div>
+                
+                <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 24px; border-radius: 12px;">
+                    <div style="font-size: 32px; margin-bottom: 12px;">📈</div>
+                    <h4 style="font-size: 20px; margin-bottom: 8px;">Scalability</h4>
+                    <p style="opacity: 0.9;">Bisa handle growth 10x. Mudah add capacity. 
+                       Sistem tetap lancar saat bisnis berkembang.</p>
+                </div>
+                
+                <div style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white; padding: 24px; border-radius: 12px;">
+                    <div style="font-size: 32px; margin-bottom: 12px;">🔒</div>
+                    <h4 style="font-size: 20px; margin-bottom: 8px;">Security</h4>
+                    <p style="opacity: 0.9;">Data encrypted. JWT authentication. Audit trail lengkap. 
+                       Data customer terlindungi dengan baik.</p>
+                </div>
+                
+                <div style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white; padding: 24px; border-radius: 12px;">
+                    <div style="font-size: 32px; margin-bottom: 12px;">💰</div>
+                    <h4 style="font-size: 20px; margin-bottom: 8px;">Cost Effective</h4>
+                    <p style="opacity: 0.9;">Zero license fees. Open source semua. 
+                       Budget bisa dialokasikan untuk fitur baru.</p>
+                </div>
+                
+                <div style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%); color: white; padding: 24px; border-radius: 12px;">
+                    <div style="font-size: 32px; margin-bottom: 12px;">🔮</div>
+                    <h4 style="font-size: 20px; margin-bottom: 8px;">Future-Proof</h4>
+                    <p style="opacity: 0.9;">Technology choices relevant untuk 5+ tahun. 
+                       Tidak perlu rewrite dalam waktu dekat.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="page-break"></div>
+
+        <!-- Q&A Section -->
+        <div class="section">
+            <h2 class="section-title">❓ Questions & Answers</h2>
+            
+            <div style="margin-bottom: 24px;">
+                <h4 style="font-size: 18px; font-weight: 600; color: #2d3748; margin-bottom: 8px;">
+                    Q: Mengapa tidak pakai Microsoft stack (.NET)?
+                </h4>
+                <p style="color: #4a5568; padding-left: 20px;">
+                    <strong>A:</strong> Microsoft stack bagus dan production-ready. Namun ada license costs yang signifikan. 
+                    Tim juga lebih expert di Python/JavaScript. Stack yang dipilih zero license cost dan 
+                    tim bisa langsung produktif.
+                </p>
+            </div>
+            
+            <div style="margin-bottom: 24px;">
+                <h4 style="font-size: 18px; font-weight: 600; color: #2d3748; margin-bottom: 8px;">
+                    Q: Apakah open source = tidak ada support?
+                </h4>
+                <p style="color: #4a5568; padding-left: 20px;">
+                    <strong>A:</strong> TIDAK. PostgreSQL, FastAPI, dan Next.js memiliki komunitas yang sangat besar. 
+                    Documentation excellent. Enterprise support juga tersedia jika diperlukan (dari vendor seperti 
+                    EnterpriseDB, dll). Bahkan lebih baik dari proprietary software dalam banyak kasus.
+                </p>
+            </div>
+            
+            <div style="margin-bottom: 24px;">
+                <h4 style="font-size: 18px; font-weight: 600; color: #2d3748; margin-bottom: 8px;">
+                    Q: Bagaimana jika butuh scale lebih besar di masa depan?
+                </h4>
+                <p style="color: #4a5568; padding-left: 20px;">
+                    <strong>A:</strong> Stack ini sudah siap untuk scaling:
+                    <ul style="margin-top: 8px;">
+                        <li>Add more backend containers (dari 3 ke 10+)</li>
+                        <li>Database read replicas untuk reports</li>
+                        <li>CDN untuk static assets</li>
+                        <li>Bisa migrate ke cloud (AWS, GCP) jika perlu</li>
+                        <li>Bisa handle 100x current volume</li>
+                    </ul>
+                </p>
+            </div>
+            
+            <div style="margin-bottom: 24px;">
+                <h4 style="font-size: 18px; font-weight: 600; color: #2d3748; margin-bottom: 8px;">
+                    Q: Apakah teknologi ini akan obsolete dalam 2-3 tahun?
+                </h4>
+                <p style="color: #4a5568; padding-left: 20px;">
+                    <strong>A:</strong> TIDAK. Semua technology dipilih karena maturity dan longevity:
+                    <ul style="margin-top: 8px;">
+                        <li>PostgreSQL: 30+ tahun, akan terus relevant</li>
+                        <li>FastAPI: Growing rapidly, modern Python standard</li>
+                        <li>Next.js: Backed by Vercel (funded company), React ecosystem solid</li>
+                        <li>Docker: Container standard, not going anywhere</li>
+                    </ul>
+                    <strong>Minimal relevant untuk 5+ tahun.</strong>
+                </p>
+            </div>
+            
+            <div style="margin-bottom: 24px;">
+                <h4 style="font-size: 18px; font-weight: 600; color: #2d3748; margin-bottom: 8px;">
+                    Q: Mudah tidak hire & train developer untuk stack ini?
+                </h4>
+                <p style="color: #4a5568; padding-left: 20px;">
+                    <strong>A:</strong> SANGAT MUDAH:
+                    <ul style="margin-top: 8px;">
+                        <li>Python = most popular language, banyak talent pool</li>
+                        <li>React = most popular frontend framework</li>
+                        <li>PostgreSQL = standard database, diajarkan di universitas</li>
+                        <li>Docker = every modern developer knows it</li>
+                    </ul>
+                    <strong>Much easier daripada niche technologies.</strong>
+                </p>
+            </div>
+        </div>
+
+        <!-- Conclusion -->
+        <div class="section">
+            <h2 class="section-title">✅ Kesimpulan</h2>
+            
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px; border-radius: 12px; margin: 32px 0;">
+                <h3 style="font-size: 28px; margin-bottom: 24px;">Stack DAPK adalah Balance Optimal</h3>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                    <div>
+                        <div style="font-size: 32px; margin-bottom: 8px;">✓</div>
+                        <strong>Modern Technology</strong>
+                        <p style="opacity: 0.9; font-size: 14px;">Latest best practices</p>
+                    </div>
+                    <div>
+                        <div style="font-size: 32px; margin-bottom: 8px;">✓</div>
+                        <strong>High Performance</strong>
+                        <p style="opacity: 0.9; font-size: 14px;">Fast & responsive</p>
+                    </div>
+                    <div>
+                        <div style="font-size: 32px; margin-bottom: 8px;">✓</div>
+                        <strong>Scalable</strong>
+                        <p style="opacity: 0.9; font-size: 14px;">Grows with business</p>
+                    </div>
+                    <div>
+                        <div style="font-size: 32px; margin-bottom: 8px;">✓</div>
+                        <strong>Cost Effective</strong>
+                        <p style="opacity: 0.9; font-size: 14px;">Zero license fees</p>
+                    </div>
+                    <div>
+                        <div style="font-size: 32px; margin-bottom: 8px;">✓</div>
+                        <strong>Maintainable</strong>
+                        <p style="opacity: 0.9; font-size: 14px;">Easy to maintain</p>
+                    </div>
+                    <div>
+                        <div style="font-size: 32px; margin-bottom: 8px;">✓</div>
+                        <strong>Future-Proof</strong>
+                        <p style="opacity: 0.9; font-size: 14px;">5+ years relevant</p>
+                    </div>
+                </div>
+                
+                <p style="margin-top: 32px; font-size: 18px; text-align: center; opacity: 0.95;">
+                    <strong>Sistem ini akan serve DAPK dengan baik untuk bertahun-tahun ke depan,<br>
+                    dengan room untuk growth dan enhancement.</strong>
+                </p>
+            </div>
+        </div>
+
+        <!-- Companies Using -->
+        <div class="section">
+            <h2 class="section-title">🏢 Perusahaan yang Menggunakan Stack Ini</h2>
+            
+            <div style="background: #f7fafc; padding: 32px; border-radius: 12px; text-align: center;">
+                <p style="color: #718096; margin-bottom: 24px;">
+                    Technology yang sama digunakan oleh perusahaan-perusahaan global:
+                </p>
+                
+                <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 32px; align-items: center;">
+                    <div style="font-size: 24px; font-weight: 600; color: #2d3748;">Microsoft</div>
+                    <div style="font-size: 24px; font-weight: 600; color: #2d3748;">Uber</div>
+                    <div style="font-size: 24px; font-weight: 600; color: #2d3748;">Netflix</div>
+                    <div style="font-size: 24px; font-weight: 600; color: #2d3748;">Nike</div>
+                    <div style="font-size: 24px; font-weight: 600; color: #2d3748;">TikTok</div>
+                    <div style="font-size: 24px; font-weight: 600; color: #2d3748;">Instagram</div>
+                    <div style="font-size: 24px; font-weight: 600; color: #2d3748;">Spotify</div>
+                    <div style="font-size: 24px; font-weight: 600; color: #2d3748;">Reddit</div>
+                </div>
+                
+                <p style="color: #4a5568; margin-top: 24px; font-style: italic;">
+                    "If it's good enough for them, it's good enough for DAPK"
+                </p>
+            </div>
+        </div>
+
+        <div class="page-break"></div>
+
+        <!-- Detailed System Components -->
+        <div class="section">
+            <h2 class="section-title">⚙️ Komponen Sistem Lengkap</h2>
+            
+            <!-- Backend Services -->
+            <div class="tech-card">
+                <h3 style="font-size: 24px; font-weight: 700; color: #2d3748; margin-bottom: 20px;">
+                    🎯 Backend Services (FastAPI)
+                </h3>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                    <div style="background: #e6f3ff; padding: 20px; border-radius: 8px;">
+                        <h4 style="color: #1a365d; margin-bottom: 12px;">📦 Shipment Management API</h4>
+                        <ul style="color: #4a5568; font-size: 14px;">
+                            <li>Create/Update/Track shipments</li>
+                            <li>Auto calculate tariff & routing</li>
+                            <li>Real-time status updates</li>
+                            <li>Bulk operations untuk manifests</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: #f0fff4; padding: 20px; border-radius: 8px;">
+                        <h4 style="color: #1a365d; margin-bottom: 12px;">👤 User Management API</h4>
+                        <ul style="color: #4a5568; font-size: 14px;">
+                            <li>Authentication & Authorization</li>
+                            <li>Role-based access control</li>
+                            <li>User profile management</li>
+                            <li>Session management</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: #fefcf0; padding: 20px; border-radius: 8px;">
+                        <h4 style="color: #1a365d; margin-bottom: 12px;">💰 Financial API</h4>
+                        <ul style="color: #4a5568; font-size: 14px;">
+                            <li>COD & cash register</li>
+                            <li>Payment processing</li>
+                            <li>Financial reports</li>
+                            <li>Accounting integrations</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: #fef5e7; padding: 20px; border-radius: 8px;">
+                        <h4 style="color: #1a365d; margin-bottom: 12px;">📊 Analytics API</h4>
+                        <ul style="color: #4a5568; font-size: 14px;">
+                            <li>Business intelligence</li>
+                            <li>Performance metrics</li>
+                            <li>Custom reports</li>
+                            <li>Data exports</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: #f7fafc; padding: 20px; border-radius: 8px;">
+                        <h4 style="color: #1a365d; margin-bottom: 12px;">🔔 Notification API</h4>
+                        <ul style="color: #4a5568; font-size: 14px;">
+                            <li>WhatsApp notifications</li>
+                            <li>Email notifications</li>
+                            <li>In-app notifications</li>
+                            <li>SMS alerts (opsional)</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: #ede9fe; padding: 20px; border-radius: 8px;">
+                        <h4 style="color: #1a365d; margin-bottom: 12px;">🗃️ File Management API</h4>
+                        <ul style="color: #4a5568; font-size: 14px;">
+                            <li>POD photo uploads</li>
+                            <li>Document storage</li>
+                            <li>Label printing</li>
+                            <li>Backup management</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Frontend Applications -->
+            <div class="tech-card">
+                <h3 style="font-size: 24px; font-weight: 700; color: #2d3748; margin-bottom: 20px;">
+                    💻 Frontend Applications (Next.js)
+                </h3>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 8px;">
+                        <h4 style="margin-bottom: 12px;">🌐 Corporate Website</h4>
+                        <ul style="opacity: 0.9; font-size: 14px;">
+                            <li>Public company profile</li>
+                            <li>Service information</li>
+                            <li>Contact & locations</li>
+                            <li>SEO optimized untuk Google</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 20px; border-radius: 8px;">
+                        <h4 style="margin-bottom: 12px;">📱 Customer Portal</h4>
+                        <ul style="opacity: 0.9; font-size: 14px;">
+                            <li>Track & trace shipments</li>
+                            <li>Create new bookings</li>
+                            <li>Tariff calculator</li>
+                            <li>Account management</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 20px; border-radius: 8px;">
+                        <h4 style="margin-bottom: 12px;">👨‍💼 Staff Dashboard</h4>
+                        <ul style="opacity: 0.9; font-size: 14px;">
+                            <li>Shipment processing</li>
+                            <li>Manifest management</li>
+                            <li>Customer service tools</li>
+                            <li>Daily operations</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white; padding: 20px; border-radius: 8px;">
+                        <h4 style="margin-bottom: 12px;">📋 Admin Panel</h4>
+                        <ul style="opacity: 0.9; font-size: 14px;">
+                            <li>System configuration</li>
+                            <li>User management</li>
+                            <li>Reports & analytics</li>
+                            <li>System monitoring</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Database Schema -->
+            <div class="tech-card">
+                <h3 style="font-size: 24px; font-weight: 700; color: #2d3748; margin-bottom: 20px;">
+                    🗄️ Database Structure (PostgreSQL)
+                </h3>
+                
+                <div style="background: #f7fafc; padding: 24px; border-radius: 8px;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;">
+                        <div style="background: white; padding: 16px; border-radius: 6px; border-left: 4px solid #667eea;">
+                            <h5 style="color: #2d3748; margin-bottom: 8px;">📦 Core Tables</h5>
+                            <ul style="font-size: 13px; color: #4a5568;">
+                                <li>shipments</li>
+                                <li>customers</li>
+                                <li>users</li>
+                                <li>locations</li>
+                            </ul>
+                        </div>
+                        
+                        <div style="background: white; padding: 16px; border-radius: 6px; border-left: 4px solid #48bb78;">
+                            <h5 style="color: #2d3748; margin-bottom: 8px;">📊 Tracking Tables</h5>
+                            <ul style="font-size: 13px; color: #4a5568;">
+                                <li>shipment_statuses</li>
+                                <li>status_history</li>
+                                <li>manifests</li>
+                                <li>routes</li>
+                            </ul>
+                        </div>
+                        
+                        <div style="background: white; padding: 16px; border-radius: 6px; border-left: 4px solid #ed8936;">
+                            <h5 style="color: #2d3748; margin-bottom: 8px;">💰 Financial Tables</h5>
+                            <ul style="font-size: 13px; color: #4a5568;">
+                                <li>tariffs</li>
+                                <li>payments</li>
+                                <li>cod_transactions</li>
+                                <li>invoices</li>
+                            </ul>
+                        </div>
+                        
+                        <div style="background: white; padding: 16px; border-radius: 6px; border-left: 4px solid #9f7aea;">
+                            <h5 style="color: #2d3748; margin-bottom: 8px;">⚙️ System Tables</h5>
+                            <ul style="font-size: 13px; color: #4a5568;">
+                                <li>configurations</li>
+                                <li>audit_logs</li>
+                                <li>notifications</li>
+                                <li>file_uploads</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Performance & Monitoring -->
+        <div class="section">
+            <h2 class="section-title">📈 Performance & Monitoring</h2>
+            
+            <div class="tech-card">
+                <h3 style="font-size: 24px; font-weight: 700; color: #2d3748; margin-bottom: 20px;">
+                    ⚡ Performance Targets
+                </h3>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 24px;">
+                    <div style="text-align: center; padding: 20px; background: #f0fff4; border-radius: 8px;">
+                        <div style="font-size: 32px; font-weight: 800; color: #38a169; margin-bottom: 8px;">&lt; 200ms</div>
+                        <div style="color: #2d3748; font-weight: 600;">API Response Time</div>
+                        <div style="color: #718096; font-size: 14px;">95th percentile</div>
+                    </div>
+                    
+                    <div style="text-align: center; padding: 20px; background: #e6f3ff; border-radius: 8px;">
+                        <div style="font-size: 32px; font-weight: 800; color: #3182ce; margin-bottom: 8px;">&lt; 2s</div>
+                        <div style="color: #2d3748; font-weight: 600;">Page Load Time</div>
+                        <div style="color: #718096; font-size: 14px;">First meaningful paint</div>
+                    </div>
+                    
+                    <div style="text-align: center; padding: 20px; background: #fefcf0; border-radius: 8px;">
+                        <div style="font-size: 32px; font-weight: 800; color: #d69e2e; margin-bottom: 8px;">99.9%</div>
+                        <div style="color: #2d3748; font-weight: 600;">Uptime Target</div>
+                        <div style="color: #718096; font-size: 14px;">Monthly SLA</div>
+                    </div>
+                    
+                    <div style="text-align: center; padding: 20px; background: #fef5e7; border-radius: 8px;">
+                        <div style="font-size: 32px; font-weight: 800; color: #dd6b20; margin-bottom: 8px;">10,000+</div>
+                        <div style="color: #2d3748; font-weight: 600;">Concurrent Users</div>
+                        <div style="color: #718096; font-size: 14px;">Peak capacity</div>
+                    </div>
+                </div>
+                
+                <h4 style="font-size: 20px; font-weight: 600; color: #2d3748; margin: 24px 0 16px;">🔍 Monitoring Tools</h4>
+                <div style="background: #f7fafc; padding: 20px; border-radius: 8px;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;">
+                        <div>
+                            <h5 style="color: #2d3748; margin-bottom: 8px;">📊 Application Monitoring</h5>
+                            <ul style="font-size: 14px; color: #4a5568;">
+                                <li>FastAPI built-in metrics</li>
+                                <li>Database connection pooling</li>
+                                <li>Request/response logging</li>
+                                <li>Error tracking & alerts</li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h5 style="color: #2d3748; margin-bottom: 8px;">🖥️ Server Monitoring</h5>
+                            <ul style="font-size: 14px; color: #4a5568;">
+                                <li>Docker container health checks</li>
+                                <li>CPU & Memory utilization</li>
+                                <li>Disk space monitoring</li>
+                                <li>Network traffic analysis</li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h5 style="color: #2d3748; margin-bottom: 8px;">🗃️ Database Monitoring</h5>
+                            <ul style="font-size: 14px; color: #4a5568;">
+                                <li>Query performance analysis</li>
+                                <li>Connection pool status</li>
+                                <li>Backup verification</li>
+                                <li>Replication lag (jika ada)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Security Implementation -->
+        <div class="section">
+            <h2 class="section-title">🔒 Security Implementation</h2>
+            
+            <div class="tech-card">
+                <h3 style="font-size: 24px; font-weight: 700; color: #2d3748; margin-bottom: 20px;">
+                    🛡️ Multi-Layer Security Approach
+                </h3>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 24px; border-radius: 8px;">
+                        <div style="font-size: 32px; margin-bottom: 12px;">🌐</div>
+                        <h4 style="font-size: 18px; margin-bottom: 8px;">Network Security</h4>
+                        <ul style="opacity: 0.9; font-size: 14px;">
+                            <li>HTTPS everywhere (SSL/TLS 1.3)</li>
+                            <li>Nginx reverse proxy</li>
+                            <li>Rate limiting & DDoS protection</li>
+                            <li>IP whitelisting untuk admin</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 24px; border-radius: 8px;">
+                        <div style="font-size: 32px; margin-bottom: 12px;">👤</div>
+                        <h4 style="font-size: 18px; margin-bottom: 8px;">Authentication</h4>
+                        <ul style="opacity: 0.9; font-size: 14px;">
+                            <li>JWT tokens dengan expiration</li>
+                            <li>Refresh token rotation</li>
+                            <li>Role-based access control (RBAC)</li>
+                            <li>Session management</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 24px; border-radius: 8px;">
+                        <div style="font-size: 32px; margin-bottom: 12px;">🗃️</div>
+                        <h4 style="font-size: 18px; margin-bottom: 8px;">Data Security</h4>
+                        <ul style="opacity: 0.9; font-size: 14px;">
+                            <li>Password hashing (bcrypt)</li>
+                            <li>Sensitive data encryption</li>
+                            <li>Database connection encryption</li>
+                            <li>Regular automated backups</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white; padding: 24px; border-radius: 8px;">
+                        <div style="font-size: 32px; margin-bottom: 12px;">📝</div>
+                        <h4 style="font-size: 18px; margin-bottom: 8px;">Audit & Compliance</h4>
+                        <ul style="opacity: 0.9; font-size: 14px;">
+                            <li>Comprehensive audit logs</li>
+                            <li>User activity tracking</li>
+                            <li>Data access monitoring</li>
+                            <li>GDPR compliance ready</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Deployment Strategy -->
+        <div class="section">
+            <h2 class="section-title">🚀 Deployment Strategy</h2>
+            
+            <div class="tech-card">
+                <h3 style="font-size: 24px; font-weight: 700; color: #2d3748; margin-bottom: 20px;">
+                    📋 Phased Deployment Plan
+                </h3>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                    <div style="background: #e6f3ff; padding: 20px; border-radius: 8px; border-left: 4px solid #3182ce;">
+                        <h4 style="color: #1e40af; margin-bottom: 12px;">Phase 1: Core System</h4>
+                        <p style="color: #4a5568; font-size: 14px; margin-bottom: 12px;"><strong>Timeline:</strong> Minggu 1-8</p>
+                        <ul style="color: #4a5568; font-size: 14px;">
+                            <li>Database setup & migration</li>
+                            <li>Basic API endpoints</li>
+                            <li>Authentication system</li>
+                            <li>Staff dashboard MVP</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: #f0fff4; padding: 20px; border-radius: 8px; border-left: 4px solid #38a169;">
+                        <h4 style="color: #22543d; margin-bottom: 12px;">Phase 2: Business Logic</h4>
+                        <p style="color: #4a5568; font-size: 14px; margin-bottom: 12px;"><strong>Timeline:</strong> Minggu 9-16</p>
+                        <ul style="color: #4a5568; font-size: 14px;">
+                            <li>Shipment management</li>
+                            <li>Tariff calculation</li>
+                            <li>Manifest processing</li>
+                            <li>Basic reporting</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: #fefcf0; padding: 20px; border-radius: 8px; border-left: 4px solid #d69e2e;">
+                        <h4 style="color: #b45309; margin-bottom: 12px;">Phase 3: Customer Features</h4>
+                        <p style="color: #4a5568; font-size: 14px; margin-bottom: 12px;"><strong>Timeline:</strong> Minggu 17-24</p>
+                        <ul style="color: #4a5568; font-size: 14px;">
+                            <li>Customer portal</li>
+                            <li>Track & trace</li>
+                            <li>Corporate website</li>
+                            <li>Notifications (WhatsApp)</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: #fef5e7; padding: 20px; border-radius: 8px; border-left: 4px solid #dd6b20;">
+                        <h4 style="color: #9c4221; margin-bottom: 12px;">Phase 4: Advanced Features</h4>
+                        <p style="color: #4a5568; font-size: 14px; margin-bottom: 12px;"><strong>Timeline:</strong> Minggu 25-32</p>
+                        <ul style="color: #4a5568; font-size: 14px;">
+                            <li>Advanced analytics</li>
+                            <li>Financial integration</li>
+                            <li>Mobile optimization</li>
+                            <li>Performance optimization</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Risk Mitigation -->
+        <div class="section">
+            <h2 class="section-title">⚠️ Risk Mitigation</h2>
+            
+            <div class="tech-card">
+                <h3 style="font-size: 24px; font-weight: 700; color: #2d3748; margin-bottom: 20px;">
+                    🛡️ Identified Risks & Mitigation Strategies
+                </h3>
+                
+                <div style="display: grid; grid-template-columns: 1fr; gap: 16px;">
+                    <div style="background: #fed7d7; padding: 20px; border-radius: 8px; border-left: 4px solid #e53e3e;">
+                        <h4 style="color: #742a2a; margin-bottom: 8px;">🚨 Risk: Server Hardware Failure</h4>
+                        <p style="color: #2d3748; font-size: 14px; margin-bottom: 8px;"><strong>Impact:</strong> System downtime, business disruption</p>
+                        <p style="color: #2d3748; font-size: 14px;"><strong>Mitigation:</strong></p>
+                        <ul style="color: #4a5568; font-size: 14px;">
+                            <li>Daily automated backups ke external storage</li>
+                            <li>Database replication untuk failover</li>
+                            <li>Docker containers untuk quick recovery</li>
+                            <li>Cloud migration plan sebagai backup</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: #feebc8; padding: 20px; border-radius: 8px; border-left: 4px solid #dd6b20;">
+                        <h4 style="color: #7b341e; margin-bottom: 8px;">⚠️ Risk: Performance Degradation</h4>
+                        <p style="color: #2d3748; font-size: 14px; margin-bottom: 8px;"><strong>Impact:</strong> Slow user experience, productivity loss</p>
+                        <p style="color: #2d3748; font-size: 14px;"><strong>Mitigation:</strong></p>
+                        <ul style="color: #4a5568; font-size: 14px;">
+                            <li>Load balancing dengan 3 backend instances</li>
+                            <li>Database query optimization & indexing</li>
+                            <li>Redis caching untuk data yang sering diakses</li>
+                            <li>Performance monitoring & alerting</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: #bee3f8; padding: 20px; border-radius: 8px; border-left: 4px solid #3182ce;">
+                        <h4 style="color: #2a4365; margin-bottom: 8px;">🔒 Risk: Security Breach</h4>
+                        <p style="color: #2d3748; font-size: 14px; margin-bottom: 8px;"><strong>Impact:</strong> Data loss, regulatory issues</p>
+                        <p style="color: #2d3748; font-size: 14px;"><strong>Mitigation:</strong></p>
+                        <ul style="color: #4a5568; font-size: 14px;">
+                            <li>Multi-layer security implementation</li>
+                            <li>Regular security audits & updates</li>
+                            <li>Role-based access control</li>
+                            <li>Comprehensive audit logging</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: #c6f6d5; padding: 20px; border-radius: 8px; border-left: 4px solid #38a169;">
+                        <h4 style="color: #22543d; margin-bottom: 8px;">👨‍💻 Risk: Developer Dependency</h4>
+                        <p style="color: #2d3748; font-size: 14px; margin-bottom: 8px;"><strong>Impact:</strong> Maintenance challenges jika developer tidak available</p>
+                        <p style="color: #2d3748; font-size: 14px;"><strong>Mitigation:</strong></p>
+                        <ul style="color: #4a5568; font-size: 14px;">
+                            <li>Comprehensive documentation & code comments</li>
+                            <li>Standard development practices</li>
+                            <li>Knowledge transfer sessions</li>
+                            <li>Popular tech stack = mudah hire replacement</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="page-break"></div>
+
+        <!-- Training & Onboarding -->
+        <div class="section">
+            <h2 class="section-title">🎓 Training & Onboarding Plan</h2>
+            
+            <div class="tech-card">
+                <h3 style="font-size: 24px; font-weight: 700; color: #2d3748; margin-bottom: 20px;">
+                    📚 Developer & User Training Strategy
+                </h3>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;">
+                    <!-- Developer Training -->
+                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 24px; border-radius: 12px;">
+                        <h4 style="font-size: 20px; margin-bottom: 16px;">👨‍💻 Developer Training</h4>
+                        <div style="opacity: 0.9;">
+                            <p style="margin-bottom: 12px; font-size: 14px;"><strong>Duration:</strong> 2-3 minggu</p>
+                            <ul style="font-size: 14px;">
+                                <li>FastAPI fundamentals & best practices</li>
+                                <li>Next.js React development</li>
+                                <li>PostgreSQL optimization</li>
+                                <li>Docker containerization</li>
+                                <li>Code review & Git workflow</li>
+                                <li>Testing & debugging techniques</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <!-- Admin Training -->
+                    <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 24px; border-radius: 12px;">
+                        <h4 style="font-size: 20px; margin-bottom: 16px;">👨‍💼 Admin Training</h4>
+                        <div style="opacity: 0.9;">
+                            <p style="margin-bottom: 12px; font-size: 14px;"><strong>Duration:</strong> 1 minggu</p>
+                            <ul style="font-size: 14px;">
+                                <li>System configuration & settings</li>
+                                <li>User management & roles</li>
+                                <li>Backup & recovery procedures</li>
+                                <li>Performance monitoring</li>
+                                <li>Security best practices</li>
+                                <li>Troubleshooting common issues</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <!-- End User Training -->
+                    <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 24px; border-radius: 12px;">
+                        <h4 style="font-size: 20px; margin-bottom: 16px;">👥 End User Training</h4>
+                        <div style="opacity: 0.9;">
+                            <p style="margin-bottom: 12px; font-size: 14px;"><strong>Duration:</strong> 2-3 hari</p>
+                            <ul style="font-size: 14px;">
+                                <li>Dashboard navigation</li>
+                                <li>Shipment creation & management</li>
+                                <li>Manifest processing</li>
+                                <li>Report generation</li>
+                                <li>Customer service workflows</li>
+                                <li>Mobile app usage</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Maintenance & Support -->
+        <div class="section">
+            <h2 class="section-title">🔧 Maintenance & Support</h2>
+            
+            <div class="tech-card">
+                <h3 style="font-size: 24px; font-weight: 700; color: #2d3748; margin-bottom: 20px;">
+                    🛠️ Ongoing Maintenance Strategy
+                </h3>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                    <div style="background: #f0fff4; padding: 20px; border-radius: 8px; border-left: 4px solid #38a169;">
+                        <h4 style="color: #22543d; margin-bottom: 12px;">📅 Routine Maintenance</h4>
+                        <ul style="color: #4a5568; font-size: 14px;">
+                            <li><strong>Daily:</strong> Backup verification</li>
+                            <li><strong>Weekly:</strong> Performance review</li>
+                            <li><strong>Monthly:</strong> Security updates</li>
+                            <li><strong>Quarterly:</strong> System optimization</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: #e6f3ff; padding: 20px; border-radius: 8px; border-left: 4px solid #3182ce;">
+                        <h4 style="color: #2a4365; margin-bottom: 12px;">🚨 Emergency Support</h4>
+                        <ul style="color: #4a5568; font-size: 14px;">
+                            <li><strong>24/7:</strong> Critical issue response</li>
+                            <li><strong>< 1 hour:</strong> System down response</li>
+                            <li><strong>< 4 hours:</strong> Performance issues</li>
+                            <li><strong>< 8 hours:</strong> Feature bugs</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: #fefcf0; padding: 20px; border-radius: 8px; border-left: 4px solid #d69e2e;">
+                        <h4 style="color: #b45309; margin-bottom: 12px;">📊 Monitoring & Alerts</h4>
+                        <ul style="color: #4a5568; font-size: 14px;">
+                            <li>Server health monitoring</li>
+                            <li>Database performance tracking</li>
+                            <li>Application error logging</li>
+                            <li>Automatic alert notifications</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: #fef5e7; padding: 20px; border-radius: 8px; border-left: 4px solid #dd6b20;">
+                        <h4 style="color: #9c4221; margin-bottom: 12px;">🔄 Update & Upgrade</h4>
+                        <ul style="color: #4a5568; font-size: 14px;">
+                            <li>Security patch management</li>
+                            <li>Feature enhancement rollouts</li>
+                            <li>Technology stack updates</li>
+                            <li>Staged deployment process</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cost Analysis -->
+        <div class="section">
+            <h2 class="section-title">💰 Total Cost of Ownership</h2>
+            
+            <div class="tech-card">
+                <h3 style="font-size: 24px; font-weight: 700; color: #2d3748; margin-bottom: 20px;">
+                    📊 5-Year Cost Comparison
+                </h3>
+                
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; margin: 24px 0; background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-radius: 8px; overflow: hidden;">
+                        <thead style="background: #667eea; color: white;">
+                            <tr>
+                                <th style="padding: 16px; text-align: left; font-weight: 600;">Cost Category</th>
+                                <th style="padding: 16px; text-align: center; font-weight: 600;">Proprietary Stack</th>
+                                <th style="padding: 16px; text-align: center; font-weight: 600; background: #48bb78;">DAPK Open Source</th>
+                                <th style="padding: 16px; text-align: center; font-weight: 600;">Savings</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="background: #f8f9fa;">
+                                <td style="padding: 16px; font-weight: 600;">Software Licenses</td>
+                                <td style="padding: 16px; text-align: center;">$75,000</td>
+                                <td style="padding: 16px; text-align: center; color: #38a169; font-weight: 600;">$0</td>
+                                <td style="padding: 16px; text-align: center; color: #38a169; font-weight: 600;">$75,000</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 16px; font-weight: 600;">Development Cost</td>
+                                <td style="padding: 16px; text-align: center;">$120,000</td>
+                                <td style="padding: 16px; text-align: center;">$100,000</td>
+                                <td style="padding: 16px; text-align: center; color: #38a169; font-weight: 600;">$20,000</td>
+                            </tr>
+                            <tr style="background: #f8f9fa;">
+                                <td style="padding: 16px; font-weight: 600;">Hardware & Infrastructure</td>
+                                <td style="padding: 16px; text-align: center;">$50,000</td>
+                                <td style="padding: 16px; text-align: center;">$30,000</td>
+                                <td style="padding: 16px; text-align: center; color: #38a169; font-weight: 600;">$20,000</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 16px; font-weight: 600;">Maintenance & Support</td>
+                                <td style="padding: 16px; text-align: center;">$80,000</td>
+                                <td style="padding: 16px; text-align: center;">$60,000</td>
+                                <td style="padding: 16px; text-align: center; color: #38a169; font-weight: 600;">$20,000</td>
+                            </tr>
+                            <tr style="background: #f8f9fa;">
+                                <td style="padding: 16px; font-weight: 600;">Training & Documentation</td>
+                                <td style="padding: 16px; text-align: center;">$25,000</td>
+                                <td style="padding: 16px; text-align: center;">$15,000</td>
+                                <td style="padding: 16px; text-align: center; color: #38a169; font-weight: 600;">$10,000</td>
+                            </tr>
+                            <tr style="background: linear-gradient(135deg, #48bb78 0%, #38a169 100%); color: white; font-weight: 700;">
+                                <td style="padding: 20px; font-size: 18px;">TOTAL 5-YEAR TCO</td>
+                                <td style="padding: 20px; text-align: center; font-size: 18px;">$350,000</td>
+                                <td style="padding: 20px; text-align: center; font-size: 18px;">$205,000</td>
+                                <td style="padding: 20px; text-align: center; font-size: 20px;">$145,000</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div style="background: linear-gradient(135deg, #48bb78 0%, #38a169 100%); color: white; padding: 24px; border-radius: 8px; text-align: center; margin-top: 20px;">
+                    <h4 style="font-size: 24px; margin-bottom: 8px;">💰 Total Savings: $145,000 in 5 Years</h4>
+                    <p style="opacity: 0.9;">Money saved dapat dialokasikan untuk business expansion, marketing, atau operational improvements</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Future Roadmap -->
+        <div class="section">
+            <h2 class="section-title">🚀 Future Technology Roadmap</h2>
+            
+            <div class="tech-card">
+                <h3 style="font-size: 24px; font-weight: 700; color: #2d3748; margin-bottom: 20px;">
+                    🗺️ 3-Year Technology Evolution Plan
+                </h3>
+                
+                <div style="position: relative; padding: 20px 0;">
+                    <!-- Year 1 -->
+                    <div style="display: flex; align-items: flex-start; margin-bottom: 40px;">
+                        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 16px 20px; border-radius: 50px; margin-right: 20px; font-weight: 700; min-width: 100px; text-align: center;">
+                            Year 1
+                        </div>
+                        <div style="flex: 1;">
+                            <h4 style="color: #2d3748; font-size: 20px; margin-bottom: 12px;">Foundation & Core Features</h4>
+                            <ul style="color: #4a5568; font-size: 14px;">
+                                <li>Complete core system deployment</li>
+                                <li>All basic features operational</li>
+                                <li>User training & adoption</li>
+                                <li>Performance optimization</li>
+                                <li>Security hardening</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <!-- Year 2 -->
+                    <div style="display: flex; align-items: flex-start; margin-bottom: 40px;">
+                        <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 16px 20px; border-radius: 50px; margin-right: 20px; font-weight: 700; min-width: 100px; text-align: center;">
+                            Year 2
+                        </div>
+                        <div style="flex: 1;">
+                            <h4 style="color: #2d3748; font-size: 20px; margin-bottom: 12px;">Enhancement & Integration</h4>
+                            <ul style="color: #4a5568; font-size: 14px;">
+                                <li>AI-powered features (route optimization, demand forecasting)</li>
+                                <li>Advanced analytics & business intelligence</li>
+                                <li>Third-party integrations (banks, govt systems)</li>
+                                <li>Mobile applications (iOS/Android)</li>
+                                <li>API ecosystem for partners</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <!-- Year 3 -->
+                    <div style="display: flex; align-items: flex-start;">
+                        <div style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white; padding: 16px 20px; border-radius: 50px; margin-right: 20px; font-weight: 700; min-width: 100px; text-align: center;">
+                            Year 3
+                        </div>
+                        <div style="flex: 1;">
+                            <h4 style="color: #2d3748; font-size: 20px; margin-bottom: 12px;">Innovation & Scale</h4>
+                            <ul style="color: #4a5568; font-size: 14px;">
+                                <li>IoT integration (GPS tracking, temperature monitoring)</li>
+                                <li>Blockchain for supply chain transparency</li>
+                                <li>Cloud migration for global scalability</li>
+                                <li>Machine learning for predictive maintenance</li>
+                                <li>International expansion support</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Technical Specifications -->
+        <div class="section">
+            <h2 class="section-title">⚙️ Technical Specifications</h2>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;">
+                <!-- Server Requirements -->
+                <div class="tech-card">
+                    <h3 style="font-size: 20px; font-weight: 700; color: #2d3748; margin-bottom: 16px;">
+                        🖥️ Server Requirements
+                    </h3>
+                    
+                    <div style="background: #f7fafc; padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+                        <h4 style="color: #2d3748; margin-bottom: 8px;">Minimum Specs</h4>
+                        <ul style="color: #4a5568; font-size: 14px;">
+                            <li><strong>CPU:</strong> 4 cores @ 2.5GHz</li>
+                            <li><strong>RAM:</strong> 16GB DDR4</li>
+                            <li><strong>Storage:</strong> 500GB SSD</li>
+                            <li><strong>Network:</strong> 100Mbps</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: #e6f3ff; padding: 16px; border-radius: 8px;">
+                        <h4 style="color: #2d3748; margin-bottom: 8px;">Recommended Specs</h4>
+                        <ul style="color: #4a5568; font-size: 14px;">
+                            <li><strong>CPU:</strong> 8 cores @ 3.0GHz</li>
+                            <li><strong>RAM:</strong> 32GB DDR4</li>
+                            <li><strong>Storage:</strong> 1TB NVMe SSD</li>
+                            <li><strong>Network:</strong> 1Gbps</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Development Tools -->
+                <div class="tech-card">
+                    <h3 style="font-size: 20px; font-weight: 700; color: #2d3748; margin-bottom: 16px;">
+                        🛠️ Development Tools
+                    </h3>
+                    
+                    <div style="background: #f0fff4; padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+                        <h4 style="color: #2d3748; margin-bottom: 8px;">Core Tools</h4>
+                        <ul style="color: #4a5568; font-size: 14px;">
+                            <li><strong>IDE:</strong> VS Code / PyCharm</li>
+                            <li><strong>Version Control:</strong> Git + GitHub</li>
+                            <li><strong>API Testing:</strong> Postman / Thunder Client</li>
+                            <li><strong>Database:</strong> pgAdmin 4</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: #fefcf0; padding: 16px; border-radius: 8px;">
+                        <h4 style="color: #2d3748; margin-bottom: 8px;">DevOps Tools</h4>
+                        <ul style="color: #4a5568; font-size: 14px;">
+                            <li><strong>Containerization:</strong> Docker + Docker Compose</li>
+                            <li><strong>Process Management:</strong> PM2</li>
+                            <li><strong>Monitoring:</strong> Prometheus + Grafana</li>
+                            <li><strong>Backup:</strong> pg_dump + rsync</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Performance Benchmarks -->
+                <div class="tech-card">
+                    <h3 style="font-size: 20px; font-weight: 700; color: #2d3748; margin-bottom: 16px;">
+                        📊 Performance Benchmarks
+                    </h3>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <div style="background: #e6f3ff; padding: 12px; border-radius: 6px; text-align: center;">
+                            <div style="font-size: 24px; font-weight: 800; color: #3182ce;">10,000+</div>
+                            <div style="font-size: 12px; color: #4a5568;">Requests/sec</div>
+                        </div>
+                        
+                        <div style="background: #f0fff4; padding: 12px; border-radius: 6px; text-align: center;">
+                            <div style="font-size: 24px; font-weight: 800; color: #38a169;">&lt; 100ms</div>
+                            <div style="font-size: 12px; color: #4a5568;">API Response</div>
+                        </div>
+                        
+                        <div style="background: #fefcf0; padding: 12px; border-radius: 6px; text-align: center;">
+                            <div style="font-size: 24px; font-weight: 800; color: #d69e2e;">99.9%</div>
+                            <div style="font-size: 12px; color: #4a5568;">Uptime</div>
+                        </div>
+                        
+                        <div style="background: #fef5e7; padding: 12px; border-radius: 6px; text-align: center;">
+                            <div style="font-size: 24px; font-weight: 800; color: #dd6b20;">&lt; 2GB</div>
+                            <div style="font-size: 12px; color: #4a5568;">Memory Usage</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Final Recommendations -->
+        <div class="section">
+            <h2 class="section-title">🎯 Final Recommendations</h2>
+            
+            <div class="tech-card">
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 32px; border-radius: 12px; margin-bottom: 24px;">
+                    <h3 style="font-size: 28px; margin-bottom: 20px; text-align: center;">✅ Executive Decision Points</h3>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 24px;">
+                        <div style="text-align: center;">
+                            <div style="font-size: 48px; margin-bottom: 12px;">💰</div>
+                            <h4 style="margin-bottom: 8px;">Cost Effective</h4>
+                            <p style="opacity: 0.9; font-size: 14px;">$145K saved over 5 years</p>
+                        </div>
+                        
+                        <div style="text-align: center;">
+                            <div style="font-size: 48px; margin-bottom: 12px;">🚀</div>
+                            <h4 style="margin-bottom: 8px;">Future Ready</h4>
+                            <p style="opacity: 0.9; font-size: 14px;">Modern stack, 5+ years relevant</p>
+                        </div>
+                        
+                        <div style="text-align: center;">
+                            <div style="font-size: 48px; margin-bottom: 12px;">⚡</div>
+                            <h4 style="margin-bottom: 8px;">High Performance</h4>
+                            <p style="opacity: 0.9; font-size: 14px;">10K+ requests/sec capability</p>
+                        </div>
+                        
+                        <div style="text-align: center;">
+                            <div style="font-size: 48px; margin-bottom: 12px;">🛡️</div>
+                            <h4 style="margin-bottom: 8px;">Enterprise Grade</h4>
+                            <p style="opacity: 0.9; font-size: 14px;">Used by Fortune 500 companies</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="background: #f7fafc; padding: 24px; border-radius: 8px;">
+                    <h4 style="color: #2d3748; font-size: 20px; margin-bottom: 16px;">📋 Next Steps</h4>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+                        <div style="background: white; padding: 16px; border-radius: 6px; border-left: 4px solid #667eea;">
+                            <h5 style="color: #2d3748; margin-bottom: 8px;">1. Approval & Sign-off</h5>
+                            <p style="font-size: 13px; color: #4a5568;">Management approval untuk tech stack yang dipilih</p>
+                        </div>
+                        
+                        <div style="background: white; padding: 16px; border-radius: 6px; border-left: 4px solid #48bb78;">
+                            <h5 style="color: #2d3748; margin-bottom: 8px;">2. Infrastructure Setup</h5>
+                            <p style="font-size: 13px; color: #4a5568;">Server provisioning & environment setup</p>
+                        </div>
+                        
+                        <div style="background: white; padding: 16px; border-radius: 6px; border-left: 4px solid #ed8936;">
+                            <h5 style="color: #2d3748; margin-bottom: 8px;">3. Development Kickoff</h5>
+                            <p style="font-size: 13px; color: #4a5568;">Project timeline & milestone planning</p>
+                        </div>
+                        
+                        <div style="background: white; padding: 16px; border-radius: 6px; border-left: 4px solid #9f7aea;">
+                            <h5 style="color: #2d3748; margin-bottom: 8px;">4. Team Training</h5>
+                            <p style="font-size: 13px; color: #4a5568;">Developer & user onboarding programs</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <div class="footer-content">
+            <h3 style="font-size: 24px; margin-bottom: 16px;">PT. Duta Angkasa Prima Kargo</h3>
+            <p style="opacity: 0.9; margin-bottom: 8px;">DAPK Technology Stack Overview</p>
+            <p style="opacity: 0.8; font-size: 14px;">Version 1.0.0 | January 2026</p>
+            <p style="margin-top: 24px; opacity: 0.7; font-size: 14px;">
+                © 2026 PT. Duta Angkasa Prima Kargo. All rights reserved.
+            </p>
+        </div>
+    </div>
+</body>
+</html>
