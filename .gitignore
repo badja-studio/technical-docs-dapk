@@ -1,0 +1,40 @@
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Backups
+backups/
+*.sql
+*.sql.gz
+*.dump
+
+# SSL certificates
+*.pem
+*.key
+*.crt
+
+# Docker volumes (if accidentally copied)
+postgres_data/
+redis_data/
+uploads/

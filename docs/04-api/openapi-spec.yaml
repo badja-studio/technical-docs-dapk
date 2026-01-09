@@ -1,0 +1,1202 @@
+openapi: 3.0.3
+info:
+  title: DAPK Logistics System API
+  version: 1.0.0
+  description: |
+    Complete API specification for PT. Duta Angkasa Prima Kargo logistics management system.
+    
+    ## Features
+    - **Core System**: Shipment management, manifests, runsheets, cash registers
+    - **Mobile API**: Courier app endpoints for delivery operations
+    - **Public API**: Customer tracking and tariff calculator
+    
+    ## Authentication
+    Most endpoints require JWT token authentication. Include token in Authorization header:
+    ```
+    Authorization: Bearer <your-jwt-token>
+    ```
+    
+  contact:
+    name: DAPK Development Team
+    email: dev@dapk.com
+  license:
+    name: Proprietary
+    
+servers:
+  - url: https://api.dapk.com/v1
+    description: Production server
+  - url: https://staging-api.dapk.com/v1
+    description: Staging server
+  - url: http://localhost:8000/v1
+    description: Local development
+
+tags:
+  - name: Authentication
+    description: User authentication and authorization
+  - name: Shipments
+    description: Shipment management operations
+  - name: Manifests - Outbound
+    description: Outbound manifest operations
+  - name: Manifests - Inbound
+    description: Inbound manifest operations
+  - name: Surat Jalan
+    description: Warehouse handover documents
+  - name: Delivery Runsheets
+    description: Courier delivery assignments
+  - name: Cash Registers
+    description: Daily cash reconciliation
+  - name: Tracking
+    description: Shipment tracking operations
+  - name: Reports
+    description: Operational reports
+  - name: Master Data
+    description: Master data management (warehouses, couriers, tariffs)
+  - name: Mobile API
+    description: Mobile app endpoints for couriers
+  - name: Public API
+    description: Public endpoints (no auth required)
+  - name: Customer Portal
+    description: Customer dashboard and account management
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token obtained from /auth/login
+      
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          example: VALIDATION_ERROR
+        detail:
+          type: string
+          example: Weight must be greater than 0
+        field:
+          type: string
+          example: weight_kg
+        timestamp:
+          type: string
+          format: date-time
+          
+    PaginationMeta:
+      type: object
+      properties:
+        total:
+          type: integer
+          example: 150
+        page:
+          type: integer
+          example: 1
+        limit:
+          type: integer
+          example: 50
+        pages:
+          type: integer
+          example: 3
+          
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          example: user@dapk.com
+        password:
+          type: string
+          format: password
+          example: SecurePassword123
+          
+    LoginResponse:
+      type: object
+      properties:
+        access_token:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        refresh_token:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        token_type:
+          type: string
+          example: Bearer
+        expires_in:
+          type: integer
+          example: 86400
+        user:
+          $ref: '#/components/schemas/User'
+          
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+        full_name:
+          type: string
+        role:
+          type: string
+          enum: [admin, supervisor, warehouse_staff, finance, courier, customer]
+        is_active:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          
+    Shipment:
+      type: object
+      required:
+        - sender_name
+        - sender_phone
+        - sender_address
+        - origin_warehouse_id
+        - receiver_name
+        - receiver_phone
+        - receiver_address
+        - destination_warehouse_id
+        - weight_kg
+        - commodity
+        - service_type
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        awb_number:
+          type: string
+          example: DAPK-20260109-00001
+          readOnly: true
+        sender_name:
+          type: string
+          minLength: 1
+          maxLength: 255
+          example: John Doe
+        sender_phone:
+          type: string
+          example: "+6281234567890"
+        sender_address:
+          type: string
+          example: Jl. Sudirman No. 123, Jakarta
+        sender_city:
+          type: string
+          example: Jakarta
+        origin_warehouse_id:
+          type: string
+          format: uuid
+        receiver_name:
+          type: string
+          example: Jane Smith
+        receiver_phone:
+          type: string
+          example: "+6289876543210"
+        receiver_address:
+          type: string
+          example: Jl. Gatot Subroto No. 456, Surabaya
+        receiver_city:
+          type: string
+          example: Surabaya
+        destination_warehouse_id:
+          type: string
+          format: uuid
+        weight_kg:
+          type: number
+          format: decimal
+          minimum: 0.1
+          example: 5.5
+        dimensions_cm:
+          type: string
+          example: "30x20x15"
+        commodity:
+          type: string
+          example: Elektronik
+        service_type:
+          type: string
+          enum: [regular, express]
+          example: express
+        special_instructions:
+          type: string
+        base_amount:
+          type: number
+          format: decimal
+          readOnly: true
+        insurance_amount:
+          type: number
+          format: decimal
+          example: 100000
+        total_amount:
+          type: number
+          format: decimal
+          readOnly: true
+          example: 150000
+        payment_method:
+          type: string
+          enum: [COD, prepaid]
+          default: COD
+        status:
+          type: string
+          enum: [pending, confirmed, manifested_outbound, in_transit, arrived_hub, manifested_inbound, ready_for_delivery, out_for_delivery, delivered, failed_delivery, returned]
+          readOnly: true
+        customer_id:
+          type: string
+          format: uuid
+        receipt_url:
+          type: string
+          format: uri
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          
+    ShipmentList:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Shipment'
+        pagination:
+          $ref: '#/components/schemas/PaginationMeta'
+          
+    ManifestOutbound:
+      type: object
+      required:
+        - origin_warehouse_id
+        - destination_warehouse_id
+        - departure_date
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        manifest_number:
+          type: string
+          example: MO-20260109-001
+          readOnly: true
+        origin_warehouse_id:
+          type: string
+          format: uuid
+        destination_warehouse_id:
+          type: string
+          format: uuid
+        departure_date:
+          type: string
+          format: date
+        estimated_arrival_date:
+          type: string
+          format: date
+        total_shipments:
+          type: integer
+          readOnly: true
+        total_weight_kg:
+          type: number
+          readOnly: true
+        status:
+          type: string
+          enum: [draft, sealed, departed, arrived]
+          readOnly: true
+        notes:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          
+    DeliveryRunsheet:
+      type: object
+      required:
+        - warehouse_id
+        - courier_id
+        - delivery_date
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        runsheet_number:
+          type: string
+          example: DR-20260109-001
+          readOnly: true
+        warehouse_id:
+          type: string
+          format: uuid
+        courier_id:
+          type: string
+          format: uuid
+        delivery_date:
+          type: string
+          format: date
+        total_shipments:
+          type: integer
+          readOnly: true
+        delivered_count:
+          type: integer
+          readOnly: true
+        failed_count:
+          type: integer
+          readOnly: true
+        status:
+          type: string
+          enum: [assigned, in_progress, completed, cancelled]
+          readOnly: true
+        shipments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Shipment'
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          
+    ProofOfDelivery:
+      type: object
+      required:
+        - shipment_id
+        - recipient_name
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        shipment_id:
+          type: string
+          format: uuid
+        delivered_at:
+          type: string
+          format: date-time
+          readOnly: true
+        recipient_name:
+          type: string
+          example: Jane Smith
+        recipient_relationship:
+          type: string
+          example: self
+        recipient_phone:
+          type: string
+        photo_url:
+          type: string
+          format: uri
+        signature_url:
+          type: string
+          format: uri
+        delivery_notes:
+          type: string
+        latitude:
+          type: number
+          format: double
+        longitude:
+          type: number
+          format: double
+          
+    TrackingEvent:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        event_type:
+          type: string
+        status:
+          type: string
+        location_name:
+          type: string
+        description:
+          type: string
+        event_timestamp:
+          type: string
+          format: date-time
+        created_by_name:
+          type: string
+          
+    TrackingHistory:
+      type: object
+      properties:
+        awb_number:
+          type: string
+        current_status:
+          type: string
+        shipment:
+          $ref: '#/components/schemas/Shipment'
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/TrackingEvent'
+
+paths:
+  # ============================================================================
+  # AUTHENTICATION
+  # ============================================================================
+  /auth/login:
+    post:
+      tags: [Authentication]
+      summary: User login
+      description: Authenticate user and receive JWT tokens
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+                
+  /auth/refresh:
+    post:
+      tags: [Authentication]
+      summary: Refresh access token
+      description: Get new access token using refresh token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - refresh_token
+              properties:
+                refresh_token:
+                  type: string
+      responses:
+        '200':
+          description: Token refreshed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                  expires_in:
+                    type: integer
+                    
+  /auth/me:
+    get:
+      tags: [Authentication]
+      summary: Get current user
+      description: Retrieve current authenticated user information
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          description: Unauthorized
+          
+  # ============================================================================
+  # SHIPMENTS
+  # ============================================================================
+  /shipments:
+    get:
+      tags: [Shipments]
+      summary: List shipments
+      description: Retrieve paginated list of shipments with optional filters
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+            maximum: 100
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: awb_number
+          in: query
+          schema:
+            type: string
+        - name: customer_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: date_from
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: date_to
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: List of shipments
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShipmentList'
+                
+    post:
+      tags: [Shipments]
+      summary: Create shipment
+      description: Create new shipment with automatic AWB generation and tariff calculation
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Shipment'
+      responses:
+        '201':
+          description: Shipment created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Shipment'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+                
+  /shipments/{id}:
+    get:
+      tags: [Shipments]
+      summary: Get shipment by ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Shipment details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Shipment'
+        '404':
+          description: Shipment not found
+          
+    put:
+      tags: [Shipments]
+      summary: Update shipment
+      description: Update shipment details (only if status is pending or confirmed)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Shipment'
+      responses:
+        '200':
+          description: Shipment updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Shipment'
+        '400':
+          description: Cannot update (already in manifest)
+          
+    delete:
+      tags: [Shipments]
+      summary: Soft delete shipment
+      description: Mark shipment as deleted (only if status is pending)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Shipment deleted
+        '400':
+          description: Cannot delete (already in manifest)
+          
+  /shipments/{id}/tracking:
+    get:
+      tags: [Shipments, Tracking]
+      summary: Get shipment tracking history
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Tracking history
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrackingHistory'
+                
+  /shipments/{id}/receipt:
+    get:
+      tags: [Shipments]
+      summary: Download shipment receipt PDF
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: PDF file
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+                
+  # ============================================================================
+  # MANIFESTS - OUTBOUND
+  # ============================================================================
+  /manifests/outbound:
+    get:
+      tags: [Manifests - Outbound]
+      summary: List outbound manifests
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: origin_warehouse_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: destination_warehouse_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: List of manifests
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ManifestOutbound'
+                  pagination:
+                    $ref: '#/components/schemas/PaginationMeta'
+                    
+    post:
+      tags: [Manifests - Outbound]
+      summary: Create outbound manifest
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ManifestOutbound'
+      responses:
+        '201':
+          description: Manifest created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ManifestOutbound'
+                
+  /manifests/outbound/{id}/shipments:
+    post:
+      tags: [Manifests - Outbound]
+      summary: Add shipments to manifest
+      description: Add multiple shipments to outbound manifest (draft status only)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - shipment_ids
+              properties:
+                shipment_ids:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+      responses:
+        '200':
+          description: Shipments added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ManifestOutbound'
+                
+  /manifests/outbound/{id}/seal:
+    post:
+      tags: [Manifests - Outbound]
+      summary: Seal manifest
+      description: Finalize manifest (no more changes allowed after sealing)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Manifest sealed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ManifestOutbound'
+                
+  # ============================================================================
+  # DELIVERY RUNSHEETS
+  # ============================================================================
+  /runsheets:
+    get:
+      tags: [Delivery Runsheets]
+      summary: List delivery runsheets
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: courier_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: delivery_date
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: status
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of runsheets
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/DeliveryRunsheet'
+                      
+    post:
+      tags: [Delivery Runsheets]
+      summary: Create delivery runsheet
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/DeliveryRunsheet'
+                - type: object
+                  properties:
+                    shipment_ids:
+                      type: array
+                      items:
+                        type: string
+                        format: uuid
+      responses:
+        '201':
+          description: Runsheet created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeliveryRunsheet'
+                
+  /runsheets/{id}/start:
+    post:
+      tags: [Delivery Runsheets]
+      summary: Start runsheet
+      description: Courier starts delivery (status: assigned → in_progress)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Runsheet started
+          
+  # ============================================================================
+  # MOBILE API
+  # ============================================================================
+  /mobile/login:
+    post:
+      tags: [Mobile API]
+      summary: Courier login
+      description: Mobile app authentication for couriers
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+                
+  /mobile/runsheets:
+    get:
+      tags: [Mobile API]
+      summary: Get courier's runsheets
+      description: List runsheets assigned to authenticated courier
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [assigned, in_progress, completed]
+      responses:
+        '200':
+          description: Courier's runsheets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DeliveryRunsheet'
+                  
+  /mobile/runsheets/{id}/shipments/{shipment_id}/deliver:
+    post:
+      tags: [Mobile API]
+      summary: Submit proof of delivery
+      description: Mark shipment as delivered with POD
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: shipment_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProofOfDelivery'
+      responses:
+        '200':
+          description: POD submitted, shipment marked delivered
+          
+  /mobile/runsheets/{id}/shipments/{shipment_id}/fail:
+    post:
+      tags: [Mobile API]
+      summary: Mark delivery failed
+      description: Record failed delivery attempt with reason
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: shipment_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - failure_reason
+              properties:
+                failure_reason:
+                  type: string
+                  enum: [recipient_unavailable, wrong_address, refused, other]
+                failure_notes:
+                  type: string
+                will_retry:
+                  type: boolean
+                  default: true
+      responses:
+        '200':
+          description: Failed attempt recorded
+          
+  # ============================================================================
+  # PUBLIC API
+  # ============================================================================
+  /public/tracking/{awb_number}:
+    get:
+      tags: [Public API]
+      summary: Track shipment by AWB
+      description: Public tracking endpoint (no authentication required)
+      parameters:
+        - name: awb_number
+          in: path
+          required: true
+          schema:
+            type: string
+            example: DAPK-20260109-00001
+      responses:
+        '200':
+          description: Tracking information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrackingHistory'
+        '404':
+          description: Shipment not found
+          
+  /public/tariff-calculator:
+    post:
+      tags: [Public API]
+      summary: Calculate shipping cost
+      description: Estimate shipping cost based on weight and route
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - origin_warehouse_id
+                - destination_warehouse_id
+                - weight_kg
+                - service_type
+              properties:
+                origin_warehouse_id:
+                  type: string
+                  format: uuid
+                destination_warehouse_id:
+                  type: string
+                  format: uuid
+                weight_kg:
+                  type: number
+                  format: decimal
+                service_type:
+                  type: string
+                  enum: [regular, express]
+                insurance_amount:
+                  type: number
+                  format: decimal
+      responses:
+        '200':
+          description: Calculated tariff
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  base_amount:
+                    type: number
+                  insurance_amount:
+                    type: number
+                  total_amount:
+                    type: number
+                  estimated_delivery_days:
+                    type: integer
+                    
+  /public/branches:
+    get:
+      tags: [Public API]
+      summary: List branch locations
+      description: Get all active DAPK branch locations
+      responses:
+        '200':
+          description: List of branches
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      format: uuid
+                    code:
+                      type: string
+                    name:
+                      type: string
+                    address:
+                      type: string
+                    city:
+                      type: string
+                    phone:
+                      type: string
+                    latitude:
+                      type: number
+                    longitude:
+                      type: number
+
+  # ============================================================================
+  # REPORTS
+  # ============================================================================
+  /reports/uncashregister:
+    get:
+      tags: [Reports]
+      summary: Uncashregister report
+      description: Shipments delivered but not in cash register
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: warehouse_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: date_from
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: date_to
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Report data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Shipment'
+                  
+  /reports/unoutbound:
+    get:
+      tags: [Reports]
+      summary: Unoutbound report
+      description: Shipments not added to outbound manifest (abnormal)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: warehouse_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Report data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Shipment'
+
+security:
+  - bearerAuth: []
